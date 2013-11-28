@@ -2,3 +2,9 @@
 /generated
 
 .sass-cache
+
+# apatana IDE
+.project
+.gitignore~
+/.idea
+.project~
