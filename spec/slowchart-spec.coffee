@@ -1,4 +1,7 @@
 describe "slowchart", ->
+  initialVariables = undefined
+  startNodeName = undefined
+  endNodeName = undefined
   beforeEach ->
     initialVariables = variables: [
       id: "01b32e025f01f4150"
@@ -40,4 +43,7 @@ describe "slowchart", ->
     endNodeName = "bind alarm"
   describe "create", ->
     it "parametrizes the slowchart engine", ->
+      slowchart.create initialVariables, startNodeName, endNodeName
+
+
 
