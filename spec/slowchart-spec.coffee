@@ -39,12 +39,16 @@ describe "slowchart", ->
       description: "attr"
     ]
     settings =
-      initialVariables: initialVariables,
+      initialVariables: initialVariables.variables,
       startNodeName: "start",
       endNodeName: "bind alarm"
   describe "create", ->
     it "parametrizes the slowchart engine", ->
-      slowchart.create settings
+      flowchart = slowchart.create settings
+      expect(flowchart).toBeDefined()
+      expect(flowchart.initialVariables.length).toEqual(7)
+      expect(flowchart.startNodeName).toEqual("start")
+      expect(flowchart.endNodeName).toEqual("bind alarm")
 
 
 
