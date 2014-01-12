@@ -5,7 +5,10 @@ window.slowchart = do ->
   Slowchart = (els) ->
     console.log('test from constructor')
   slowchart =
+    # Object containing all the registered modules
     modules: {}
+    # Object containing all the registered init methods
+		inits: {}
     # Define the core class
     core: (settings) ->
       settings = settings || {}
@@ -32,33 +35,20 @@ window.slowchart = do ->
 
       # Set the core instance in all modules to enable access of core properties inside of modules
       for m of slowchart.modules
-      
-        # Add core access to modules in a wrapper module (like display objects that reside in the wrapper display)
-        if this[m].wrapper is true
-          for wm of this[m]
-            if typeof this[m][wm] is "object" and typeof this[m][wm].setCore is "function"
-              this[m][wm] = this[m][wm].setCore(this)
-            else this[m][wm].setCore this  if typeof this[m][wm].setCore is "function"
-            this[m].core = this
-      
         # Add core access to modules that reside directly in the core
         this[m].core = this
       
       # Initialize added modules that have registered init methods
       for name of slowchart.inits
-      
         # Modules directly on the slowchart object
         if (typeof slowchart.inits[name] is "string") and (typeof this[name][slowchart.inits[name]] is "function")
           this[name][slowchart.inits[name]]()
-      
-          # Modules that are parts of a wrapper module
-        else if slowchart.inits[name] is "object"
-          for subname of slowchart.inits[name]
-            this[name][slowchart.inits[name][subname]]()  if typeof this[name][slowchart.inits[name][subname]] is "function"
 
       return
+
     create: (settings) ->
       new slowchart.core settings
+
     registerModule: (name, module, init) ->
       if ~name.indexOf(".")
         parts = name.split(".")
@@ -71,6 +61,9 @@ window.slowchart = do ->
         slowchart.inits[name] = init  if init isnt `undefined`
 
   slowchart.core.prototype =
-    build: ->
+    initialize: ->
+      this.build.toolbox
+      this.build.flowspace
+      return this
 
   slowchart
