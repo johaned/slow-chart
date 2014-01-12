@@ -7,6 +7,7 @@ window.slowchart = do ->
   slowchart =
     # Define the core class
     core: (settings) ->
+      settings = settings || {}
       # Initializes a array of initial variables that will be loaded in the components
       # of flow chart, this variables are loaded through create function as a parameter
       # assignment agent which could received the data from Rest API
@@ -17,7 +18,7 @@ window.slowchart = do ->
       # start node Name that will be show in main gui into workspace, this can be changed
       # from settings obteined from create function
       this.endNodeName = settings.endNodeName || "end node"
-
+      return
     create: (settings) ->
       new slowchart.core settings
   slowchart
