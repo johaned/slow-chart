@@ -95,14 +95,14 @@ Created by johaned on 12/15/13.
     # build the main container node, it creates a div element an inserts into the body document
     mainContainer: (id)->
       div = document.createElement("div")
-      div.id = id
+      div.id = id.replace('#','')
       document.body.appendChild(div)
       return this
 
     # build the the toolbox located in left side of page, this contains the flow nodes and some
     # actions to interact between them
     toolbox: ->
-      mainNode = document.querySelectorAll(this.core.domContainerSelector)
+      mainNode = document.querySelector(this.core.domContainerSelector)
 
       return this
 
