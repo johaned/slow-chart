@@ -1,17 +1,22 @@
 ###
 Created by johaned on 12/15/13.
 ###
-window.slowchart = do ->
-  Slowchart = (els) ->
-    console.log('test from constructor')
+((window, document, undefined_) ->
   slowchart =
-    # Object containing all the registered modules
+  # Object containing all the registered modules
     modules: {}
-    # Object containing all the registered init methods
-		inits: {}
-    # Define the core class
-    core: (settings) ->
+  # Object containing all the registered init methods
+    inits: {}
+  # Define the core class
+    core: (settings)->
       settings = settings || {}
+
+      this.isCore = true
+
+      this.defaultValues =
+        domContainerSelector: "#flowchart"
+        startNodeName: "start node"
+        endNodeName: "end node"
 
       # Initializes a array of initial variables that will be loaded in the components
       # of flow chart, this variables are loaded through create function as a parameter
@@ -20,11 +25,14 @@ window.slowchart = do ->
 
       # start node Name that will be show in main gui into workspace, this can be changed
       # from settings obteined from create function
-      this.startNodeName = settings.startNodeName || "start node"
+      this.startNodeName = settings.startNodeName || this.defaultValues.startNodeName
 
       # start node Name that will be show in main gui into workspace, this can be changed
       # from settings obteined from create function
-      this.endNodeName = settings.endNodeName || "end node"
+      this.endNodeName = settings.endNodeName || this.defaultValues.endNodeName
+
+      # Setup the main container node in DOM
+      this.domContainerSelector = settings.flowchart || this.defaultValues.domContainerSelector
 
       # Add the registered modules to the new instance of core
       for m of slowchart.modules
@@ -37,7 +45,7 @@ window.slowchart = do ->
       for m of slowchart.modules
         # Add core access to modules that reside directly in the core
         this[m].core = this
-      
+
       # Initialize added modules that have registered init methods
       for name of slowchart.inits
         # Modules directly on the slowchart object
@@ -47,23 +55,58 @@ window.slowchart = do ->
       return
 
     create: (settings) ->
-      new slowchart.core settings
+      new this.core settings
 
-    registerModule: (name, module, init) ->
+    registerModule: (name, module) ->
       if ~name.indexOf(".")
         parts = name.split(".")
         slowchart.modules[parts[0]][parts[1]] = module
-        if init isnt `undefined`
-          slowchart.inits[parts[0]] = {}  unless slowchart.inits[parts[0]]
-          slowchart.inits[parts[0]][parts[1]] = init
       else
         slowchart.modules[name] = module
-        slowchart.inits[name] = init  if init isnt `undefined`
 
   slowchart.core.prototype =
     initialize: ->
-      this.build.toolbox
-      this.build.flowspace
+      this.build.setup()
+      this.build.toolbox()
+#      this.build.flowspace
       return this
 
-  slowchart
+  # Attach the slowchart object to the window object for access outside of this file
+  window.slowchart = slowchart
+
+  # Define Object.create if not available
+  if typeof Object.create isnt "function"
+    Object.create = (o) ->
+      F = ->
+      F:: = o
+      new F()
+
+  build = ->
+    # Return an object when instantiated
+
+    # Check if node ID gave from settings points to real node in document, if not, it creates
+    # a new main container with id value by default and updates the
+    setup: ->
+      unless document.querySelectorAll(this.core.domContainerSelector).length == 1
+        this.core.domContainerSelector = this.core.defaultValues.domContainerSelector
+        this.core.build.mainContainer(this.core.defaultValues.domContainerSelector)
+      return this
+
+    # build the main container node, it creates a div element an inserts into the body document
+    mainContainer: (id)->
+      div = document.createElement("div")
+      div.id = id
+      document.body.appendChild(div)
+      return this
+
+    # build the the toolbox located in left side of page, this contains the flow nodes and some
+    # actions to interact between them
+    toolbox: ->
+      mainNode = document.querySelectorAll(this.core.domContainerSelector)
+
+      return this
+
+#    flowspace: ->
+
+  slowchart.registerModule("build", build);
+) window, document

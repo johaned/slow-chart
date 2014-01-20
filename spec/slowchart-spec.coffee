@@ -39,16 +39,24 @@ describe "slowchart", ->
       description: "attr"
     ]
     settings =
-      initialVariables: initialVariables.variables,
-      startNodeName: "start",
+      initialVariables: initialVariables.variables
+      startNodeName: "start"
       endNodeName: "bind alarm"
+      flowchart: "#flowchart"
   describe "create", ->
-    it "parametrizes the slowchart engine", ->
+    it "parametrizes the main engine", ->
       flowchart = slowchart.create settings
       expect(flowchart).toBeDefined()
       expect(flowchart.initialVariables.length).toEqual(7)
       expect(flowchart.startNodeName).toEqual("start")
       expect(flowchart.endNodeName).toEqual("bind alarm")
+      expect(flowchart.domContainerSelector).toEqual("#flowchart")
+    it "initializes the main engine", ->
+      flowchart = slowchart.create settings
+      flowchart.initialize()
+      mainNode = document.getElementById("flowchart")
+      expect(mainNode).toBeDefined()
+
 
 
 
