@@ -43,7 +43,7 @@ describe "slowchart", ->
       startNodeName: "start"
       endNodeName: "bind alarm"
       flowchart: "#neo-flowchart"
-  describe "create process", ->
+  describe "creating process", ->
     it "parametrizes the main engine", ->
       flowchart = slowchart.create settings
       expect(flowchart).toBeDefined()
@@ -51,14 +51,14 @@ describe "slowchart", ->
       expect(flowchart.startNodeName).toEqual(settings.startNodeName)
       expect(flowchart.endNodeName).toEqual(settings.endNodeName)
       expect(flowchart.domContainerSelector).toEqual(settings.flowchart)
-    describe "initialize when main container does not exists", ->
+    describe "initialization process when main container does not exists", ->
       beforeEach ->
         flowchart = slowchart.create settings
         flowchart.initialize()
       it "checks if the main container is created", ->
         mainNode = document.querySelector("#flowchart")
         expect(mainNode).not.toBe(null);
-    describe "initialize when main container exists", ->
+    describe "initialization process when main container exists", ->
       beforeEach ->
         div = document.createElement("div")
         div.id = settings.flowchart.replace('#','')
@@ -67,10 +67,10 @@ describe "slowchart", ->
         flowchart.initialize()
       it "checks if the main container is created", ->
         mainNode = document.querySelector(settings.flowchart)
-        expect(mainNode).not.toBe(null);
+        expect(mainNode).not.toBe(null)
       it "checks if the toolbox container is created", ->
-        toolBox = document.querySelector(settings.flowchart)
-
+        toolBox = document.querySelector(settings.flowchart + " .toolbox")
+        expect(toolBox).not.toBe(null)
 
 
 
