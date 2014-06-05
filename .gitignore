@@ -8,3 +8,4 @@
 .gitignore~
 /.idea
 .project~
+/node_modules
