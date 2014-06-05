@@ -1,3 +1,4 @@
 <div class="hello">
   <%= text %>
 </div>
+<canvas id="canvas" width="506" height="1062"></canvas>
