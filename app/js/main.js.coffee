@@ -18,6 +18,15 @@ Created by johaned on 12/15/13.
         startNodeName: "start node"
         endNodeName: "end node"
 
+      this.domHierarchy =
+        toolBoxClass: "toolbox"
+        flowSpaceClass: "flowspace"
+        toolBoxSelector: () ->
+          "."+this.toolBoxClass
+        flowSpaceSelector: () ->
+          "."+this.flowSpaceClass
+
+
       # Initializes a array of initial variables that will be loaded in the components
       # of flow chart, this variables are loaded through create function as a parameter
       # assignment agent which could received the data from Rest API
@@ -54,9 +63,15 @@ Created by johaned on 12/15/13.
 
       return
 
+    # Creates an instance of slowchart's core
+    # @param settings [Object], contains the initial variables, start node name, end node name
+    # and selector of main container node
     create: (settings) ->
       new this.core settings
 
+    # Method for registering a new module
+    # @param name [String], name which the module will be registered
+    # @param module [function], reference to function that describe the module
     registerModule: (name, module) ->
       if ~name.indexOf(".")
         parts = name.split(".")
@@ -64,6 +79,7 @@ Created by johaned on 12/15/13.
       else
         slowchart.modules[name] = module
 
+  # Methods the core instances will have access to
   slowchart.core.prototype =
     initialize: ->
       this.build.setup()
@@ -103,10 +119,22 @@ Created by johaned on 12/15/13.
     # actions to interact between them
     toolbox: ->
       mainNode = document.querySelector(this.core.domContainerSelector)
+      toolBox = "<div class='"+this.core.domHierarchy.toolBoxClass+"'></div>"
+      this.core.misc.insertElement(toolBox, mainNode)
 
       return this
 
 #    flowspace: ->
 
   slowchart.registerModule("build", build);
+
+  misc = ->
+    # Return an object when instantiated
+
+    # Create a node element based on string definition of object
+    insertElement: (element, parent) ->
+      parent.innerHTML = element + parent.innerHTML
+      return this
+
+  slowchart.registerModule("misc", misc);
 ) window, document
