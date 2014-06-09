@@ -1,8 +1,8 @@
 /*!
- * oCanvas v2.5.1
+ * oCanvas v2.7.1
  * http://ocanvas.org/
  *
- * Copyright 2011-2013, Johannes Koggdal
+ * Copyright 2011-2014, Johannes Koggdal
  * Licensed under the MIT license
  * http://ocanvas.org/license
  *
@@ -14,6 +14,9 @@
 
 	// Define the oCanvas object
 	var oCanvas = {
+	    
+		// Version number of this oCanvas release.
+		version: "2.7.1",
 		
 		// Array containing all canvases created by oCanvas on the current page
 		canvasList: [],
@@ -262,8 +265,8 @@
 		},
 		
 		// Method for removing an object from the canvas
-		removeChild: function (displayobj) {
-			displayobj.remove();
+		removeChild: function (displayobj, redraw) {
+			displayobj.remove(redraw);
 			
 			return this;
 		},
@@ -2445,7 +2448,7 @@
 						// Loop through all added objects
 						for (i = 0; i < l; i++) {
 							if (objects[i] !== undefined) {
-								objects[i].add();
+								objects[i].add(false);
 							}
 						}
 						
@@ -2463,7 +2466,7 @@
 						for (i = 0; i < l; i++) {
 							if (objects[i] !== undefined) {
 								// Remove the object from canvas
-								objects[i].remove();
+								objects[i].remove(false);
 							}
 						}
 						
@@ -2482,7 +2485,9 @@
 				}
 				this.current = name;
 				this.scenes[name].load();
-				
+
+				this.core.draw.redraw();
+
 				return this;
 			},
 			
@@ -2490,7 +2495,9 @@
 			unload: function (name) {
 				this.current = "none";
 				this.scenes[name].unload();
-				
+
+				this.core.draw.redraw();
+
 				return this;
 			}
 		};
@@ -4700,19 +4707,19 @@
 			},
 			
 			// Method for removing a child
-			removeChild: function (childObj) {
+			removeChild: function (childObj, redraw) {
 				var index = this.children.indexOf(childObj);
 				if (~index) {
-					this.removeChildAt(index);
+					this.removeChildAt(index, redraw);
 				}
 				
 				return this;
 			},
 			
 			// Method for removing a child at a specific index
-			removeChildAt: function (index) {
+			removeChildAt: function (index, redraw) {
 				if (this.children[index] !== undefined) {
-					this.children[index].remove();
+					this.children[index].remove(redraw);
 				}
 				
 				return this;
@@ -4962,6 +4969,10 @@
 		// Return an object when instantiated
 		return oCanvas.extend({
 			core: thecore,
+
+			_: oCanvas.extend({}, thecore.displayObject._, {
+				hasBeenDrawn: false
+			}),
 			
 			shapeType: "rectangular",
 			loaded: false,
@@ -5013,7 +5024,7 @@
 					_this.tile_width = (_this.tile_width === 0) ? _this.width : _this.tile_width;
 					_this.tile_height = (_this.tile_height === 0) ? _this.height : _this.tile_height;
 					_this.core.canvasElement.removeChild(this);
-					_this.core.redraw();
+					if (_this._.hasBeenDrawn) _this.core.redraw();
 				};
 				
 				// Set the path to the image if a string was passed in
@@ -5094,6 +5105,8 @@
 						_this.draw();
 					}, 100);
 				}
+
+				this._.hasBeenDrawn = true;
 				
 				return this;
 			}
@@ -5107,6 +5120,8 @@
 
 
 
+
+	var loadedFonts = [];
 
 	// Define the class
 	var text = function (settings, thecore) {
@@ -5134,6 +5149,7 @@
 			align: "start",
 			baseline: "top",
 			_: oCanvas.extend({}, thecore.displayObject._, {
+				hasBeenDrawn: false,
 				font: "normal normal normal 16px/1 sans-serif",
 				style: "normal",
 				variant: "normal",
@@ -5291,12 +5307,18 @@
 			// Method for initializing a web font.
 			// Sometimes the font needs to be used once first to trigger it, before using it for the real text
 			initWebFont: function () {
+				var font = this.style + " " + this.variant + " " + this.weight + " 0px " + this.family;
+
+				if (loadedFonts.indexOf(font) > -1) return;
+				loadedFonts.push(font);
+
+				var self = this;
 				var core = this.core,
 					dummy;
 				
 				// Create a dummy element and set the current font
 				dummy = document.createElement("span");
-				dummy.style.font = this.style + " " + this.variant + " " + this.weight + " 0px " + this.family;
+				dummy.style.font = font;
 
 				// Append it to the DOM. This will trigger the web font to be used and available to the canvas
 				document.body.appendChild(dummy);
@@ -5305,7 +5327,7 @@
 				// Also redraw the canvas so text that didn't show before now appears
 				setTimeout(function () {
 					document.body.removeChild(dummy);
-					core.redraw();
+					if (self._.hasBeenDrawn) core.redraw();
 				}, 1000);
 			},
 
@@ -5378,6 +5400,8 @@
 				}
 				
 				canvas.closePath();
+
+				this._.hasBeenDrawn = true;
 				
 				return this;
 			}
