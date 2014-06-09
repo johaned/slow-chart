@@ -43,6 +43,10 @@ describe "slowchart", ->
       startNodeName: "start"
       endNodeName: "bind alarm"
       flowchart: "#neo-flowchart"
+      
+  afterEach ->
+    document.body.innerHTML= ""
+
   describe "creating process", ->
     it "parametrizes the main engine", ->
       flowchart = slowchart.create settings
