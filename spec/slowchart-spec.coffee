@@ -1,4 +1,4 @@
-describe "slowchart", ->
+describe "slowchart engine creation", ->
   initialVariables = {}
   settings = {}
   beforeEach ->
@@ -43,11 +43,11 @@ describe "slowchart", ->
       startNodeName: "start"
       endNodeName: "bind alarm"
       flowchart: "#neo-flowchart"
-      
+
   afterEach ->
     document.body.innerHTML= ""
 
-  describe "creating process", ->
+  describe "setup", ->
     it "parametrizes the main engine", ->
       flowchart = slowchart.create settings
       expect(flowchart).toBeDefined()
@@ -55,26 +55,55 @@ describe "slowchart", ->
       expect(flowchart.startNodeName).toEqual(settings.startNodeName)
       expect(flowchart.endNodeName).toEqual(settings.endNodeName)
       expect(flowchart.domContainerSelector).toEqual(settings.flowchart)
-    describe "initialization process when main container does not exists", ->
+
+    describe "engine initialization when main container does not exists", ->
       beforeEach ->
-        flowchart = slowchart.create settings
-        flowchart.initialize()
+        @flowchart = slowchart.create settings
+        @flowchart.initialize()
       it "checks if the main container is created", ->
         mainNode = document.querySelector("#flowchart")
         expect(mainNode).not.toBe(null);
-    describe "initialization process when main container exists", ->
+      it "checks if the toolbox container is created", ->
+        toolBox = document.querySelector("#flowchart .toolbox")
+        expect(toolBox).not.toBe(null)
+      it "checks if the canvas container is created", ->
+        canvas = document.querySelector("#flowchart .toolbox .canvas")
+        expect(canvas).not.toBe(null)
+      it "checks if the flowspace canvas container is created", ->
+        canvas = document.querySelector("#flowchart .flowspace .canvas")
+        expect(canvas).not.toBe(null)
+      it "checks if toolbox canvas has been referenced in flowchart object", ->
+        expect(@flowchart.toolboxCanvas).not.toBe(null)
+        expect(@flowchart.toolboxCanvas).toEqual(jasmine.any(Object))
+      it "checks if flowspace canvas has been referenced in flowchart object", ->
+        expect(@flowchart.flowspaceCanvas).not.toBe(null)
+        expect(@flowchart.flowspaceCanvas).toEqual(jasmine.any(Object))
+
+    describe "engine initialization when main container exists", ->
       beforeEach ->
         div = document.createElement("div")
         div.id = settings.flowchart.replace('#','')
         document.body.appendChild(div)
-        flowchart = slowchart.create settings
-        flowchart.initialize()
+        @flowchart = slowchart.create settings
+        @flowchart.initialize()
       it "checks if the main container is created", ->
         mainNode = document.querySelector(settings.flowchart)
         expect(mainNode).not.toBe(null)
       it "checks if the toolbox container is created", ->
         toolBox = document.querySelector(settings.flowchart + " .toolbox")
         expect(toolBox).not.toBe(null)
+      it "checks if the toolbox canvas container is created", ->
+        canvas = document.querySelector(settings.flowchart + " .toolbox .canvas")
+        expect(canvas).not.toBe(null)
+      it "checks if the flowspace canvas container is created", ->
+        canvas = document.querySelector(settings.flowchart + " .flowspace .canvas")
+        expect(canvas).not.toBe(null)
+      it "checks if toolbox canvas has been referenced in flowchart object", ->
+        expect(@flowchart.toolboxCanvas).not.toBe(null)
+        expect(@flowchart.toolboxCanvas).toEqual(jasmine.any(Object))
+      it "checks if flowspace canvas has been referenced in flowchart object", ->
+        expect(@flowchart.flowspaceCanvas).not.toBe(null)
+        expect(@flowchart.flowspaceCanvas).toEqual(jasmine.any(Object))
 
 
 

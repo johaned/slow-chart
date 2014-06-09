@@ -46,10 +46,10 @@ Created by johaned on 12/15/13.
       this.endNodeName = settings.endNodeName || this.defaultValues.endNodeName
 
       # Reference to tool box oCanvas object, the instance is created through toolbox method
-      this.toolboxCanvas = {}
+      this.toolboxCanvas = null
 
       # Reference to flowchart oCanvas object, the instance is created through flowspace method
-      this.flowspaceCanvas = {}
+      this.flowspaceCanvas = null
 
       # Setup the main container node in DOM
       this.domContainerSelector = settings.flowchart || this.defaultValues.domContainerSelector
@@ -95,7 +95,7 @@ Created by johaned on 12/15/13.
     initialize: ->
       this.build.setup()
       this.build.toolbox()
-#      this.build.flowspace
+      this.build.flowspace()
       return this
 
   # Attach the slowchart object to the window object for access outside of this file
@@ -132,12 +132,22 @@ Created by johaned on 12/15/13.
       mainNode = document.querySelector(this.core.domContainerSelector)
       toolBoxElement = "<div class='"+this.core.domHierarchy.toolBoxClass+"'></div>"
       this.core.misc.insertElement(toolBoxElement, mainNode)
-      canvasElement = "<div class='"+this.core.domHierarchy.subcanvasClass+"'></div>"
+      canvasElement = "<canvas class='"+this.core.domHierarchy.subcanvasClass+"'></canvas>"
       toolbox = document.querySelector(this.core.domHierarchy.toolBoxSelector())
       this.core.misc.insertElement(canvasElement, toolbox)
+      this.core.toolboxCanvas = oCanvas.create (canvas: this.core.domContainerSelector + " " + this.core.domHierarchy.toolBoxCanvasSelector())
       return this
 
-#    flowspace: ->
+    # build the the flowspace located in right side of page, this contains the flow chart 
+    flowspace: ->
+      mainNode = document.querySelector(this.core.domContainerSelector)
+      flowspaceElement = "<div class='"+this.core.domHierarchy.flowSpaceClass+"'></div>"
+      this.core.misc.insertElement(flowspaceElement, mainNode)
+      canvasElement = "<canvas class='"+this.core.domHierarchy.subcanvasClass+"'></canvas>"
+      flowspace = document.querySelector(this.core.domHierarchy.flowSpaceSelector())
+      this.core.misc.insertElement(canvasElement, flowspace)
+      this.core.flowspaceCanvas = oCanvas.create (canvas: this.core.domContainerSelector + " " + this.core.domHierarchy.flowSpaceCanvasSelector())
+      return this
 
   slowchart.registerModule("build", build);
 
