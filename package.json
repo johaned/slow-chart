@@ -9,7 +9,8 @@
   },
   "devDependencies": {
     "lineman": "^0.32.2",
-    "lineman-less": "0.0.1"
+    "lineman-less": "0.0.1",
+    "jasmine-fixture": "1.0.8"
   },
   "engines": {
     "node": "~>0.10.5",
