@@ -21,10 +21,15 @@ Created by johaned on 12/15/13.
       this.domHierarchy =
         toolBoxClass: "toolbox"
         flowSpaceClass: "flowspace"
+        subcanvasClass: "canvas"
         toolBoxSelector: () ->
           "."+this.toolBoxClass
         flowSpaceSelector: () ->
           "."+this.flowSpaceClass
+        toolBoxCanvasSelector: () ->
+          "."+this.toolBoxClass+" ."+this.subcanvasClass
+        flowSpaceCanvasSelector: () ->
+          "."+this.flowSpaceClass+" ."+this.subcanvasClass
 
 
       # Initializes a array of initial variables that will be loaded in the components
@@ -39,6 +44,12 @@ Created by johaned on 12/15/13.
       # start node Name that will be show in main gui into workspace, this can be changed
       # from settings obteined from create function
       this.endNodeName = settings.endNodeName || this.defaultValues.endNodeName
+
+      # Reference to tool box oCanvas object, the instance is created through toolbox method
+      this.toolboxCanvas = {}
+
+      # Reference to flowchart oCanvas object, the instance is created through flowspace method
+      this.flowspaceCanvas = {}
 
       # Setup the main container node in DOM
       this.domContainerSelector = settings.flowchart || this.defaultValues.domContainerSelector
@@ -119,9 +130,11 @@ Created by johaned on 12/15/13.
     # actions to interact between them
     toolbox: ->
       mainNode = document.querySelector(this.core.domContainerSelector)
-      toolBox = "<div class='"+this.core.domHierarchy.toolBoxClass+"'></div>"
-      this.core.misc.insertElement(toolBox, mainNode)
-
+      toolBoxElement = "<div class='"+this.core.domHierarchy.toolBoxClass+"'></div>"
+      this.core.misc.insertElement(toolBoxElement, mainNode)
+      canvasElement = "<div class='"+this.core.domHierarchy.subcanvasClass+"'></div>"
+      toolbox = document.querySelector(this.core.domHierarchy.toolBoxSelector())
+      this.core.misc.insertElement(canvasElement, toolbox)
       return this
 
 #    flowspace: ->
