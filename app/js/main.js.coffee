@@ -93,9 +93,9 @@ Created by johaned on 12/15/13.
   # Methods the core instances will have access to
   slowchart.core.prototype =
     initialize: ->
-      this.build.setup()
-      this.build.toolbox()
-      this.build.flowspace()
+      this.builder.setup()
+      this.builder.toolbox()
+      this.builder.flowspace()
       return this
 
   # Attach the slowchart object to the window object for access outside of this file
@@ -108,7 +108,7 @@ Created by johaned on 12/15/13.
       F:: = o
       new F()
 
-  build = ->
+  builder = ->
     # Return an object when instantiated
 
     # Check if node ID gave from settings points to real node in document, if not, it creates
@@ -116,17 +116,17 @@ Created by johaned on 12/15/13.
     setup: ->
       unless document.querySelectorAll(this.core.domContainerSelector).length == 1
         this.core.domContainerSelector = this.core.defaultValues.domContainerSelector
-        this.core.build.mainContainer(this.core.defaultValues.domContainerSelector)
+        this.core.builder.mainContainer(this.core.defaultValues.domContainerSelector)
       return this
 
-    # build the main container node, it creates a div element an inserts into the body document
+    # builds the main container node, it creates a div element an inserts into the body document
     mainContainer: (id)->
       div = document.createElement("div")
       div.id = id.replace('#','')
       document.body.appendChild(div)
       return this
 
-    # build the the toolbox located in left side of page, this contains the flow nodes and some
+    # builds the the toolbox located in left side of page, this contains the flow nodes and some
     # actions to interact between them
     toolbox: ->
       mainNode = document.querySelector(this.core.domContainerSelector)
@@ -138,7 +138,7 @@ Created by johaned on 12/15/13.
       this.core.toolboxCanvas = oCanvas.create (canvas: this.core.domContainerSelector + " " + this.core.domHierarchy.toolBoxCanvasSelector())
       return this
 
-    # build the the flowspace located in right side of page, this contains the flow chart 
+    # builds the the flowspace located in right side of page, this contains the flow chart
     flowspace: ->
       mainNode = document.querySelector(this.core.domContainerSelector)
       flowspaceElement = "<div class='"+this.core.domHierarchy.flowSpaceClass+"'></div>"
@@ -149,7 +149,7 @@ Created by johaned on 12/15/13.
       this.core.flowspaceCanvas = oCanvas.create (canvas: this.core.domContainerSelector + " " + this.core.domHierarchy.flowSpaceCanvasSelector())
       return this
 
-  slowchart.registerModule("build", build);
+  slowchart.registerModule("builder", builder);
 
   misc = ->
     # Return an object when instantiated
