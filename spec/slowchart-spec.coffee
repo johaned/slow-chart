@@ -73,11 +73,11 @@ describe "slowchart engine creation", ->
         canvas = document.querySelector("#flowchart .flowspace .canvas")
         expect(canvas).not.toBe(null)
       it "checks if toolbox canvas has been referenced in flowchart object", ->
-        expect(@flowchart.toolboxCanvas).not.toBe(null)
-        expect(@flowchart.toolboxCanvas).toEqual(jasmine.any(Object))
+        expect(@flowchart.toolbox.oCanvasElement).not.toBe(null)
+        expect(@flowchart.toolbox.oCanvasElement).toEqual(jasmine.any(Object))
       it "checks if flowspace canvas has been referenced in flowchart object", ->
-        expect(@flowchart.flowspaceCanvas).not.toBe(null)
-        expect(@flowchart.flowspaceCanvas).toEqual(jasmine.any(Object))
+        expect(@flowchart.flowspace.oCanvasElement).not.toBe(null)
+        expect(@flowchart.flowspace.oCanvasElement).toEqual(jasmine.any(Object))
 
     describe "engine initialization when main container exists", ->
       beforeEach ->
@@ -99,11 +99,11 @@ describe "slowchart engine creation", ->
         canvas = document.querySelector(settings.flowchart + " .flowspace .canvas")
         expect(canvas).not.toBe(null)
       it "checks if toolbox canvas has been referenced in flowchart object", ->
-        expect(@flowchart.toolboxCanvas).not.toBe(null)
-        expect(@flowchart.toolboxCanvas).toEqual(jasmine.any(Object))
+        expect(@flowchart.toolbox.oCanvasElement).not.toBe(null)
+        expect(@flowchart.toolbox.oCanvasElement).toEqual(jasmine.any(Object))
       it "checks if flowspace canvas has been referenced in flowchart object", ->
-        expect(@flowchart.flowspaceCanvas).not.toBe(null)
-        expect(@flowchart.flowspaceCanvas).toEqual(jasmine.any(Object))
+        expect(@flowchart.flowspace.oCanvasElement).not.toBe(null)
+        expect(@flowchart.flowspace.oCanvasElement).toEqual(jasmine.any(Object))
 
 
 
