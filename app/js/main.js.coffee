@@ -124,7 +124,7 @@ Created by johaned on 12/15/13.
       # oCanvas objects were built by using isolated way, because strange behaviour
       # appears when they are built into the scaffold method
       @builder.createCanvasObjects()
-      @builder.createTools()
+      @builder.toolbox()
       return this
 
   # Attach the slowchart object to the window object for access outside of this file
@@ -153,51 +153,122 @@ Created by johaned on 12/15/13.
       @core.misc.insertElement(flowchartContainer, parent)
       # builds the the toolbox located in left side of page, this contains the flow nodes and some
       # actions to interact between them
-      @core.builder.createScaffold(@core.domHierarchy.toolBoxClass, @core.domHierarchy.toolBoxSelector())
+      @core.builder.createScaffold(@core.domHierarchy.toolBoxClass, @core.domHierarchy.toolBoxSelector(), 200, 700)
       # builds the the flowspace located in right side of page, this contains the flow chart
-      @core.builder.createScaffold(@core.domHierarchy.flowSpaceClass, @core.domHierarchy.flowSpaceSelector())
+      @core.builder.createScaffold(@core.domHierarchy.flowSpaceClass, @core.domHierarchy.flowSpaceSelector(), 800, 1000)
       return
 
     # Creates the common scaffold to flowspace and toolbox
-    createScaffold: (className, selector)->
+    createScaffold: (className, selector, canvasWidth, canvasHeight)->
       mainNode = document.querySelector(@core.domContainerID)
       spaceElement = "<div class='"+className+"'></div>"
       @core.misc.insertElement(spaceElement, mainNode)
-      canvasElement = "<canvas class='"+@core.domHierarchy.subcanvasClass+"'></canvas>"
+      canvasElement = "<canvas class='"+@core.domHierarchy.subcanvasClass+"' width="+canvasWidth+" height="+canvasHeight+"></canvas>"
       space = document.querySelector(@core.domContainerID+' '+selector)
       @core.misc.insertElement(canvasElement, space)
       return
 
     createCanvasObjects: ->
-      selector = @core.domContainerID + " " + @core.domHierarchy.flowSpaceCanvasSelector()
-      @core.toolbox.oCanvasElement = @core.builder.oCanvasFactory(selector)
       selector = @core.domContainerID + " " + @core.domHierarchy.toolBoxCanvasSelector()
+      @core.toolbox.oCanvasElement = @core.builder.oCanvasFactory(selector)
+      selector = @core.domContainerID + " " + @core.domHierarchy.flowSpaceCanvasSelector()
       @core.flowspace.oCanvasElement = @core.builder.oCanvasFactory(selector)
 
     # Creates oCanvas object
     oCanvasFactory: (selector)->
       oCanvas.create (
         canvas: selector
-        background: "#0cc"
+        background: "#555"
       )
 
     # creates all necessary tools in flowchart toolbox
-    createTools: ->
+    toolbox: ->
       canvas = @core.toolbox.oCanvasElement
-      @core.toolbox.tools.operation = canvas.display.rectangle(
-        x: canvas.width / 2
-        y: canvas.width / 5
-        origin:
-          x: "center"
-          y: "center"
-
+      canvas.display.text(
+        x: 10
+        y: 10
         width: 300
-        height: 40
-        fill: "#079"
-        stroke: "10px #079"
+        height: 25
+        origin: { x: "left", y: "top" }
+        align: "left"
+        font: "bold 16px helvetica"
+        text: "TOOLBOX"
+        fill: "#999"
+      ).add()
+      canvas.display.text(
+        x: 10
+        y: 60
+        width: 300
+        height: 15
+        origin: { x: "left", y: "top" }
+        align: "left"
+        font: "bold 15px helvetica"
+        text: "Operation"
+        fill: "#eee"
+      ).add()
+      canvas.display.text(
+        x: 10
+        y: 160
+        width: 300
+        height: 15
+        origin: { x: "left", y: "top" }
+        align: "left"
+        font: "bold 15px helvetica"
+        text: "Decision"
+        fill: "#eee"
+      ).add()
+      canvas.display.text(
+        x: 10
+        y: 260
+        width: 300
+        height: 15
+        origin: { x: "left", y: "top" }
+        align: "left"
+        font: "bold 15px helvetica"
+        text: "Relation"
+        fill: "#eee"
+      ).add()
+      @core.toolbox.tools.operation = canvas.display.rectangle(
+        x: 25
+        y: 100
+        origin:
+          x: "left"
+          y: "top"
+        width: 150
+        height: 30
+        fill: "#8cc"
+        stroke: "2px #079"
         join: "round"
       )
+      @core.toolbox.tools.decision = canvas.display.polygon(
+        x: 70
+        y: 185
+        origin:
+          x: "left"
+          y: "top"
+        sides: 4
+        radius: 30
+        rotation: 0
+        fill: "#eba"
+        stroke: "2px #e55"
+      )
+      @core.toolbox.tools.relation = canvas.display.line(
+        start:
+          x: 180
+          y: 290
+        end:
+          x: 20
+          y: 340
+        stroke: "4px #bE5"
+        cap: "round"
+      )
       canvas.addChild(@core.toolbox.tools.operation)
+      canvas.addChild(@core.toolbox.tools.decision)
+      canvas.addChild(@core.toolbox.tools.relation)
+      @core.toolbox.tools.decision.bind "mouseenter", ->
+        @fill = "hsl(" + Math.random() * 360 + ", 50%, 50%)"
+        @draw();
+        return
 
   slowchart.registerModule("builder", builder);
 
