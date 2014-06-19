@@ -1,8 +1,33 @@
 /* Defines all style slowchart structure*/
 // Variables
-@main-width: 1000px;
+@main-width: 1020px;
 @main-height: 700px;
+@toolbox-width: 200px;
+@toolbox-height: 700px;
+@flowspace-width: 800px;
+@flowspace-height: 700px;
+
 #flowchart{
   width: @main-width;
   height: @main-height;
+  .toolbox{
+    border: 1px solid black;
+    float: left;
+    width: @toolbox-width;
+    height: @toolbox-height;
+    .canvas{
+      width: @toolbox-width;
+      height: @toolbox-height;
+    }
+  }
+  .flowspace{
+    border: 1px solid black;
+    float: right;
+    width: @flowspace-width;
+    height: @flowspace-height;
+    .canvas{
+      width: @flowspace-width;
+      height: @flowspace-height;
+    }
+  }
 }
