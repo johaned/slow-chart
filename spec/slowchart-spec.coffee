@@ -42,7 +42,7 @@ describe "slowchart engine creation", ->
       initialVariables: initialVariables.variables
       startNodeName: "start"
       endNodeName: "bind alarm"
-      flowchart: "#neo-flowchart"
+      cssContainerSelector: '.foo'
 
   afterEach ->
     document.body.innerHTML= ""
@@ -54,9 +54,8 @@ describe "slowchart engine creation", ->
       expect(flowchart.initialVariables.length).toEqual(initialVariables.variables.length)
       expect(flowchart.startNodeName).toEqual(settings.startNodeName)
       expect(flowchart.endNodeName).toEqual(settings.endNodeName)
-      expect(flowchart.domContainerSelector).toEqual(settings.flowchart)
 
-    describe "engine initialization when main container does not exists", ->
+    describe "engine initialization when parent container does not exists", ->
       beforeEach ->
         @flowchart = slowchart.create settings
         @flowchart.initialize()
@@ -81,22 +80,21 @@ describe "slowchart engine creation", ->
 
     describe "engine initialization when main container exists", ->
       beforeEach ->
-        div = document.createElement("div")
-        div.id = settings.flowchart.replace('#','')
-        document.body.appendChild(div)
+        fooDiv = "<div class='foo'></div>"
+        document.body.innerHTML = fooDiv
         @flowchart = slowchart.create settings
         @flowchart.initialize()
       it "checks if the main container is created", ->
-        mainNode = document.querySelector(settings.flowchart)
+        mainNode = document.querySelector(settings.cssContainerSelector + " #flowchart")
         expect(mainNode).not.toBe(null)
       it "checks if the toolbox container is created", ->
-        toolBox = document.querySelector(settings.flowchart + " .toolbox")
+        toolBox = document.querySelector(settings.cssContainerSelector + " #flowchart .toolbox")
         expect(toolBox).not.toBe(null)
       it "checks if the toolbox canvas container is created", ->
-        canvas = document.querySelector(settings.flowchart + " .toolbox .canvas")
+        canvas = document.querySelector(settings.cssContainerSelector + " #flowchart .toolbox .canvas")
         expect(canvas).not.toBe(null)
       it "checks if the flowspace canvas container is created", ->
-        canvas = document.querySelector(settings.flowchart + " .flowspace .canvas")
+        canvas = document.querySelector(settings.cssContainerSelector + " #flowchart .flowspace .canvas")
         expect(canvas).not.toBe(null)
       it "checks if toolbox canvas has been referenced in flowchart object", ->
         expect(@flowchart.toolbox.oCanvasElement).not.toBe(null)
