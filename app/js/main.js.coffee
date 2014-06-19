@@ -73,7 +73,7 @@ Created by johaned on 12/15/13.
       @hasParentContainer = false
       @containerSelector = options.cssContainerSelector || ''
       @fullSlowchartSelector = @domContainerID
-      if document.querySelectorAll(@containerSelector).length == 1 && @containerSelector != ''
+      if @containerSelector != '' && document.querySelectorAll(@containerSelector).length == 1
         @hasParentContainer = true
         @fullSlowchartSelector = @containerSelector+" "+@domContainerID
 
