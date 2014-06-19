@@ -14,7 +14,6 @@ Created by johaned on 12/15/13.
       this.isCore = true
 
       this.defaultValues =
-        domContainerSelector: "#flowchart"
         startNodeName: "start node"
         endNodeName: "end node"
 
@@ -33,9 +32,9 @@ Created by johaned on 12/15/13.
 
       # Common slowchart settings
       this.settings =
-        container:
-          width: 800
-          height: 1000
+        domContainerID: "#flowchart"
+        htmlID: ->
+          @domContainerID.replace('#','')
 
       # Initializes a array of initial variables that will be loaded in the components
       # of flow chart, this variables are loaded through create function as a parameter
@@ -68,7 +67,15 @@ Created by johaned on 12/15/13.
         elements: null
 
       # Setup the main container node in DOM
-      this.domContainerSelector = options.flowchart || this.defaultValues.domContainerSelector
+      this.domContainerID = this.settings.domContainerID
+      
+      # Defines if html flowchart node is located in root spot or if it has a parent container
+      @hasParentContainer = false
+      @containerSelector = options.cssContainerSelector || ''
+      @fullSlowchartSelector = @domContainerID
+      if document.querySelectorAll(@containerSelector).length == 1 && @containerSelector != ''
+        @hasParentContainer = true
+        @fullSlowchartSelector = @containerSelector+" "+@domContainerID
 
       # Config file
       this.config =
@@ -137,9 +144,13 @@ Created by johaned on 12/15/13.
     # a new main container with id value by default and updates the container. Also, it creates
     # both toolbox and flowspace scaffold
     setup: ->
-      unless document.querySelectorAll(this.core.domContainerSelector).length == 1
-        this.core.domContainerSelector = this.core.defaultValues.domContainerSelector
-        this.core.builder.mainContainer(this.core.defaultValues.domContainerSelector)
+      # Builds a flowchart div into specific container
+      if this.core.hasParentContainer
+        parent = document.querySelector(this.core.containerSelector)
+      else
+        parent = document.body
+      flowchartContainer = "<div id='"+this.core.settings.htmlID()+"'></div>"
+      this.core.misc.insertElement(flowchartContainer, parent)
       # builds the the toolbox located in left side of page, this contains the flow nodes and some
       # actions to interact between them
       this.core.builder.createScaffold(this.core.domHierarchy.toolBoxClass, this.core.domHierarchy.toolBoxSelector())
@@ -147,28 +158,21 @@ Created by johaned on 12/15/13.
       this.core.builder.createScaffold(this.core.domHierarchy.flowSpaceClass, this.core.domHierarchy.flowSpaceSelector())
       return
 
-    # builds the main container node, it creates a div element an inserts into the body document
-    mainContainer: (id)->
-      div = document.createElement("div")
-      div.id = id.replace('#','')
-      document.body.appendChild(div)
-      return this
-
     # Creates the common scaffold to flowspace and toolbox
     createScaffold: (className, selector)->
-      mainNode = document.querySelector(this.core.domContainerSelector)
+      mainNode = document.querySelector(this.core.domContainerID)
       spaceElement = "<div class='"+className+"'></div>"
       this.core.misc.insertElement(spaceElement, mainNode)
       canvasElement = "<canvas class='"+this.core.domHierarchy.subcanvasClass+"'></canvas>"
-      space = document.querySelector(this.core.domContainerSelector+' '+selector)
+      space = document.querySelector(this.core.domContainerID+' '+selector)
       this.core.misc.insertElement(canvasElement, space)
       return
 
     createCanvasObjects: ->
       core = this.core
-      selector = core.domContainerSelector + " " + core.domHierarchy.flowSpaceCanvasSelector()
+      selector = core.domContainerID + " " + core.domHierarchy.flowSpaceCanvasSelector()
       core.toolbox.oCanvasElement = core.builder.oCanvasFactory(selector)
-      selector = core.domContainerSelector + " " + core.domHierarchy.toolBoxCanvasSelector()
+      selector = core.domContainerID + " " + core.domHierarchy.toolBoxCanvasSelector()
       core.flowspace.oCanvasElement = core.builder.oCanvasFactory(selector)
 
     # Creates oCanvas object
@@ -202,6 +206,8 @@ Created by johaned on 12/15/13.
     # Return an object when instantiated
 
     # Create a node element based on string definition of object
+    # param element [String], element css selector that will be inserted in parent
+    # param parent [HTML Node], new parent of html element
     insertElement: (element, parent) ->
       parent.innerHTML = element + parent.innerHTML
       return
