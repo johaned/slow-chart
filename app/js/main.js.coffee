@@ -117,6 +117,7 @@ Created by johaned on 12/15/13.
       # oCanvas objects were built by using isolated way, because strange behaviour
       # appears when they are built into the scaffold method
       this.builder.createCanvasObjects()
+      this.builder.createTools()
       return this
 
   # Attach the slowchart object to the window object for access outside of this file
