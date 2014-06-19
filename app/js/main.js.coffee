@@ -11,27 +11,27 @@ Created by johaned on 12/15/13.
     core: (options)->
       options = options || {}
 
-      this.isCore = true
+      @isCore = true
 
-      this.defaultValues =
+      @defaultValues =
         startNodeName: "start node"
         endNodeName: "end node"
 
-      this.domHierarchy =
+      @domHierarchy =
         toolBoxClass: "toolbox"
         flowSpaceClass: "flowspace"
         subcanvasClass: "canvas"
         toolBoxSelector: () ->
-          "."+this.toolBoxClass
+          "."+@toolBoxClass
         flowSpaceSelector: () ->
-          "."+this.flowSpaceClass
+          "."+@flowSpaceClass
         toolBoxCanvasSelector: () ->
-          "."+this.toolBoxClass+" ."+this.subcanvasClass
+          "."+@toolBoxClass+" ."+@subcanvasClass
         flowSpaceCanvasSelector: () ->
-          "."+this.flowSpaceClass+" ."+this.subcanvasClass
+          "."+@flowSpaceClass+" ."+@subcanvasClass
 
       # Common slowchart settings
-      this.settings =
+      @settings =
         domContainerID: "#flowchart"
         htmlID: ->
           @domContainerID.replace('#','')
@@ -39,18 +39,18 @@ Created by johaned on 12/15/13.
       # Initializes a array of initial variables that will be loaded in the components
       # of flow chart, this variables are loaded through create function as a parameter
       # assignment agent which could received the data from Rest API
-      this.initialVariables = options.initialVariables || []
+      @initialVariables = options.initialVariables || []
 
       # start node Name that will be show in main gui into workspace, this can be changed
       # from options obteined from create function
-      this.startNodeName = options.startNodeName || this.defaultValues.startNodeName
+      @startNodeName = options.startNodeName || @defaultValues.startNodeName
 
       # start node Name that will be show in main gui into workspace, this can be changed
       # from options obteined from create function
-      this.endNodeName = options.endNodeName || this.defaultValues.endNodeName
+      @endNodeName = options.endNodeName || @defaultValues.endNodeName
 
       # Reference to tool box oCanvas object, the instance is created through toolbox method
-      this.toolbox =
+      @toolbox =
         oCanvasElement: null
         dimensions:
           width: 400
@@ -62,12 +62,12 @@ Created by johaned on 12/15/13.
 
 
       # Reference to flowchart oCanvas object, the instance is created through flowspace method
-      this.flowspace =
+      @flowspace =
         oCanvasElement: null
         elements: null
 
       # Setup the main container node in DOM
-      this.domContainerID = this.settings.domContainerID
+      @domContainerID = @settings.domContainerID
       
       # Defines if html flowchart node is located in root spot or if it has a parent container
       @hasParentContainer = false
@@ -78,7 +78,7 @@ Created by johaned on 12/15/13.
         @fullSlowchartSelector = @containerSelector+" "+@domContainerID
 
       # Config file
-      this.config =
+      @config =
         areToolsCreated : false
 
       # Add the registered modules to the new instance of core
@@ -105,7 +105,7 @@ Created by johaned on 12/15/13.
     # @param options [Object], contains the initial variables, start node name, end node name
     # and selector of main container node
     create: (options) ->
-      new this.core options
+      new @core options
 
     # Method for registering a new module
     # @param name [String], name which the module will be registered
@@ -120,11 +120,11 @@ Created by johaned on 12/15/13.
   # Methods the core instances will have access to
   slowchart.core.prototype =
     initialize: ->
-      this.builder.setup()
+      @builder.setup()
       # oCanvas objects were built by using isolated way, because strange behaviour
       # appears when they are built into the scaffold method
-      this.builder.createCanvasObjects()
-      this.builder.createTools()
+      @builder.createCanvasObjects()
+      @builder.createTools()
       return this
 
   # Attach the slowchart object to the window object for access outside of this file
@@ -145,35 +145,34 @@ Created by johaned on 12/15/13.
     # both toolbox and flowspace scaffold
     setup: ->
       # Builds a flowchart div into specific container
-      if this.core.hasParentContainer
-        parent = document.querySelector(this.core.containerSelector)
+      if @core.hasParentContainer
+        parent = document.querySelector(@core.containerSelector)
       else
         parent = document.body
-      flowchartContainer = "<div id='"+this.core.settings.htmlID()+"'></div>"
-      this.core.misc.insertElement(flowchartContainer, parent)
+      flowchartContainer = "<div id='"+@core.settings.htmlID()+"'></div>"
+      @core.misc.insertElement(flowchartContainer, parent)
       # builds the the toolbox located in left side of page, this contains the flow nodes and some
       # actions to interact between them
-      this.core.builder.createScaffold(this.core.domHierarchy.toolBoxClass, this.core.domHierarchy.toolBoxSelector())
+      @core.builder.createScaffold(@core.domHierarchy.toolBoxClass, @core.domHierarchy.toolBoxSelector())
       # builds the the flowspace located in right side of page, this contains the flow chart
-      this.core.builder.createScaffold(this.core.domHierarchy.flowSpaceClass, this.core.domHierarchy.flowSpaceSelector())
+      @core.builder.createScaffold(@core.domHierarchy.flowSpaceClass, @core.domHierarchy.flowSpaceSelector())
       return
 
     # Creates the common scaffold to flowspace and toolbox
     createScaffold: (className, selector)->
-      mainNode = document.querySelector(this.core.domContainerID)
+      mainNode = document.querySelector(@core.domContainerID)
       spaceElement = "<div class='"+className+"'></div>"
-      this.core.misc.insertElement(spaceElement, mainNode)
-      canvasElement = "<canvas class='"+this.core.domHierarchy.subcanvasClass+"'></canvas>"
-      space = document.querySelector(this.core.domContainerID+' '+selector)
-      this.core.misc.insertElement(canvasElement, space)
+      @core.misc.insertElement(spaceElement, mainNode)
+      canvasElement = "<canvas class='"+@core.domHierarchy.subcanvasClass+"'></canvas>"
+      space = document.querySelector(@core.domContainerID+' '+selector)
+      @core.misc.insertElement(canvasElement, space)
       return
 
     createCanvasObjects: ->
-      core = this.core
-      selector = core.domContainerID + " " + core.domHierarchy.flowSpaceCanvasSelector()
-      core.toolbox.oCanvasElement = core.builder.oCanvasFactory(selector)
-      selector = core.domContainerID + " " + core.domHierarchy.toolBoxCanvasSelector()
-      core.flowspace.oCanvasElement = core.builder.oCanvasFactory(selector)
+      selector = @core.domContainerID + " " + @core.domHierarchy.flowSpaceCanvasSelector()
+      @core.toolbox.oCanvasElement = @core.builder.oCanvasFactory(selector)
+      selector = @core.domContainerID + " " + @core.domHierarchy.toolBoxCanvasSelector()
+      @core.flowspace.oCanvasElement = @core.builder.oCanvasFactory(selector)
 
     # Creates oCanvas object
     oCanvasFactory: (selector)->
@@ -184,8 +183,8 @@ Created by johaned on 12/15/13.
 
     # creates all necessary tools in flowchart toolbox
     createTools: ->
-      canvas = this.core.toolbox.oCanvasElement
-      this.core.toolbox.tools.operation = canvas.display.rectangle(
+      canvas = @core.toolbox.oCanvasElement
+      @core.toolbox.tools.operation = canvas.display.rectangle(
         x: canvas.width / 2
         y: canvas.width / 5
         origin:
@@ -198,7 +197,7 @@ Created by johaned on 12/15/13.
         stroke: "10px #079"
         join: "round"
       )
-      canvas.addChild(this.core.toolbox.tools.operation)
+      canvas.addChild(@core.toolbox.tools.operation)
 
   slowchart.registerModule("builder", builder);
 
