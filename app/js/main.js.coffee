@@ -162,6 +162,13 @@ Created by johaned on 12/15/13.
   # Methods the core instances will have access to
   slowchart.core.prototype =
     initialize: ->
+      # Populate the misc class2type map (object types)
+      class2type = []
+      @misc.each "Boolean Number String Function Array Date RegExp Object Error".split(" "), (i, name) ->
+        class2type["[object " + name + "]"] = name.toLowerCase()
+        return
+      @misc.class2type = class2type
+      # builds first Slowchart structure
       @builder.setup()
       # oCanvas objects were built by using isolated way, because strange behaviour
       # appears when they are built into the scaffold method
@@ -317,12 +324,92 @@ Created by johaned on 12/15/13.
   misc = ->
     # Return an object when instantiated
 
-    # Create a node element based on string definition of object
-    # param element [String], element css selector that will be inserted in parent
-    # param parent [HTML Node], new parent of html element
-    insertElement: (element, parent) ->
-      parent.innerHTML = element + parent.innerHTML
-      return
+    class2type: {}
+
+    toString: ->
+      @class2type.toString
+
+    hasOwn: ->
+      @class2type.hasOwnProperty
+
+    each: (obj, callback, args) ->
+      i = undefined
+      isArray = undefined
+      length = undefined
+      value = undefined
+      value = undefined
+      i = 0
+      length = obj.length
+      isArray = @isArraylike(obj)
+      if args
+        if isArray
+          while i < length
+            value = callback.apply(obj[i], args)
+            break  if value is false
+            i++
+        else
+          for i of obj
+            value = callback.apply(obj[i], args)
+            break  if value is false
+      else
+        if isArray
+          while i < length
+            value = callback.call(obj[i], i, obj[i])
+            break  if value is false
+            i++
+        else
+          for i of obj
+            value = callback.call(obj[i], i, obj[i])
+            break  if value is false
+      obj
+
+    # Checkis if object is window
+    isWindow: (obj) ->
+      (obj?) and obj is obj.window
+
+    # Returns object type taking into account clas2type object
+    type: (obj) ->
+      return obj + ""  unless obj?
+      if typeof obj is "object" or typeof obj is "function"
+        @class2type[@toString().call(obj)] or "object"
+      else
+        typeof obj
+
+    isArraylike: (obj) ->
+      length = obj.length
+      type = @type(obj)
+      return false  if type is "function" or @isWindow(obj)
+      return true  if obj.nodeType is 1 and length
+      type is "array" or length is 0 or typeof length is "number" and length > 0 and (length - 1) of obj
+
+    # Inspects if object is function, DOM methods and functions like alert
+    # aren't supported. They return false on IE (#2968).
+    isFunction: (obj) ->
+      @type(obj) is "function"
+
+    # Checks if object is plainObject
+    isPlainObject: (obj) ->
+      key = undefined
+      # Must be an Object.
+      # Because of IE, we also have to check the presence of the constructor property.
+      # Make sure that DOM nodes and window objects don't pass through, as well
+      return false  if not obj or @type(obj) isnt "object" or obj.nodeType or @isWindow(obj)
+      try
+      # Not own constructor property must be Object
+        return false  if obj.constructor and not @hasOwn.call(obj, "constructor") and not @hasOwn.call(obj.constructor::, "isPrototypeOf")
+      catch e
+      # IE8,9 Will throw exceptions on certain host objects #9897
+        return false
+
+      # Own properties are enumerated firstly, so to speed up,
+      # if last one is own, then all properties are own.
+      for key of obj
+        continue
+      key is `undefined` or @hasOwn.call(obj, key)
+
+    # Checks if object is Array
+    isArray: (obj) ->
+      @type(obj) is "array"
 
     # Merge the contents of two or more objects together into the first object.
     extend: ->
@@ -332,9 +419,9 @@ Created by johaned on 12/15/13.
       name = undefined
       options = undefined
       clone = undefined
-      target = arguments_[0] or {}
+      target = arguments[0] or {}
       i = 1
-      length = arguments_.length
+      length = arguments.length
       deep = false
 
       # Handle a deep copy situation
@@ -342,11 +429,11 @@ Created by johaned on 12/15/13.
         deep = target
 
         # skip the boolean and the target
-        target = arguments_[i] or {}
+        target = arguments[i] or {}
         i++
 
       # Handle case when target is a string or something (possible in deep copy)
-      target = {}  if typeof target isnt "object" and not jQuery.isFunction(target)
+      target = {}  if typeof target isnt "object" and not @isFunction(target)
 
       # extend jQuery itself if only one argument is passed
       if i is length
@@ -355,7 +442,7 @@ Created by johaned on 12/15/13.
       while i < length
 
         # Only deal with non-null/undefined values
-        if (options = arguments_[i])?
+        if (options = arguments[i])?
 
           # Extend the base object
           for name of options
@@ -366,15 +453,15 @@ Created by johaned on 12/15/13.
             continue  if target is copy
 
             # Recurse if we're merging plain objects or arrays
-            if deep and copy and (jQuery.isPlainObject(copy) or (copyIsArray = jQuery.isArray(copy)))
+            if deep and copy and (@isPlainObject(copy) or (copyIsArray = @isArray(copy)))
               if copyIsArray
                 copyIsArray = false
-                clone = (if src and jQuery.isArray(src) then src else [])
+                clone = (if src and @isArray(src) then src else [])
               else
-                clone = (if src and jQuery.isPlainObject(src) then src else {})
+                clone = (if src and @isPlainObject(src) then src else {})
 
               # Never move original objects, clone them
-              target[name] = jQuery.extend(deep, clone, copy)
+              target[name] = @extend(deep, clone, copy)
 
               # Don't bring in undefined values
             else target[name] = copy  if copy isnt `undefined`
@@ -382,6 +469,13 @@ Created by johaned on 12/15/13.
 
       # Return the modified object
       target
+
+    # Create a node element based on string definition of object
+    # param element [String], element css selector that will be inserted in parent
+    # param parent [HTML Node], new parent of html element
+    insertElement: (element, parent) ->
+      parent.innerHTML = element + parent.innerHTML
+      return
 
   slowchart.registerModule("misc", misc);
 ) window, document
