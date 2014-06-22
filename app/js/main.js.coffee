@@ -60,11 +60,53 @@ Created by johaned on 12/15/13.
           decision: null
           relation: null
 
-
       # Reference to flowchart oCanvas object, the instance is created through flowspace method
       @flowspace =
         oCanvasElement: null
         elements: null
+
+      # Graphical settings
+      @graphicalSettings =
+        text:
+          title:
+            width: 300
+            height: 25
+            origin: { x: "left", y: "top" }
+            align: "left"
+            font: "bold 16px helvetica"
+            fill: "#999"
+          subtitle:
+            width: 300
+            height: 15
+            origin: { x: "left", y: "top" }
+            align: "left"
+            font: "bold 15px helvetica"
+            fill: "#eee"
+        elements:
+          operation:
+            width: 150
+            height: 30
+            fill: "#8cc"
+            stroke: "2px #079"
+            onHoverStroke: "2px #65E"
+            join: "round"
+            origin:
+              x: "center"
+              y: "center"
+          decision:
+            sides: 4
+            radius: 30
+            rotation: 0
+            fill: "#eba"
+            stroke: "2px #e55"
+            onHoverStroke: "2px #65E"
+            origin:
+              x: "center"
+              y: "center"
+          relation:
+            stroke: "4px #bE5"
+            onHoverStroke: "2px #65E"
+            cap: "round"
 
       # Setup the main container node in DOM
       @domContainerID = @settings.domContainerID
@@ -229,11 +271,11 @@ Created by johaned on 12/15/13.
         fill: "#eee"
       ).add()
       @core.toolbox.tools.operation = canvas.display.rectangle(
-        x: 25
-        y: 100
+        x: 100
+        y: 115
         origin:
-          x: "left"
-          y: "top"
+          x: "center"
+          y: "center"
         width: 150
         height: 30
         fill: "#8cc"
@@ -241,11 +283,11 @@ Created by johaned on 12/15/13.
         join: "round"
       )
       @core.toolbox.tools.decision = canvas.display.polygon(
-        x: 70
-        y: 185
+        x: 100
+        y: 215
         origin:
-          x: "left"
-          y: "top"
+          x: "center"
+          y: "center"
         sides: 4
         radius: 30
         rotation: 0
@@ -281,6 +323,8 @@ Created by johaned on 12/15/13.
     insertElement: (element, parent) ->
       parent.innerHTML = element + parent.innerHTML
       return
+
+    
 
   slowchart.registerModule("misc", misc);
 ) window, document
