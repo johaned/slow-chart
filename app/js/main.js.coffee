@@ -234,84 +234,13 @@ Created by johaned on 12/15/13.
     # creates all necessary tools in flowchart toolbox
     toolbox: ->
       canvas = @core.toolbox.oCanvasElement
-      canvas.display.text(
-        x: 10
-        y: 10
-        width: 300
-        height: 25
-        origin: { x: "left", y: "top" }
-        align: "left"
-        font: "bold 16px helvetica"
-        text: "TOOLBOX"
-        fill: "#999"
-      ).add()
-      canvas.display.text(
-        x: 10
-        y: 60
-        width: 300
-        height: 15
-        origin: { x: "left", y: "top" }
-        align: "left"
-        font: "bold 15px helvetica"
-        text: "Operation"
-        fill: "#eee"
-      ).add()
-      canvas.display.text(
-        x: 10
-        y: 160
-        width: 300
-        height: 15
-        origin: { x: "left", y: "top" }
-        align: "left"
-        font: "bold 15px helvetica"
-        text: "Decision"
-        fill: "#eee"
-      ).add()
-      canvas.display.text(
-        x: 10
-        y: 260
-        width: 300
-        height: 15
-        origin: { x: "left", y: "top" }
-        align: "left"
-        font: "bold 15px helvetica"
-        text: "Relation"
-        fill: "#eee"
-      ).add()
-      @core.toolbox.tools.operation = canvas.display.rectangle(
-        x: 100
-        y: 115
-        origin:
-          x: "center"
-          y: "center"
-        width: 150
-        height: 30
-        fill: "#8cc"
-        stroke: "2px #079"
-        join: "round"
-      )
-      @core.toolbox.tools.decision = canvas.display.polygon(
-        x: 100
-        y: 215
-        origin:
-          x: "center"
-          y: "center"
-        sides: 4
-        radius: 30
-        rotation: 0
-        fill: "#eba"
-        stroke: "2px #e55"
-      )
-      @core.toolbox.tools.relation = canvas.display.line(
-        start:
-          x: 180
-          y: 290
-        end:
-          x: 20
-          y: 340
-        stroke: "4px #bE5"
-        cap: "round"
-      )
+      canvas.display.text(@core.canvasShapeFactory.text('title', {x: 10, y: 10, text: "TOOLBOX"})).add()
+      canvas.display.text(@core.canvasShapeFactory.text('subtitle', {x: 10, y: 60, text: "Operation"})).add()
+      canvas.display.text(@core.canvasShapeFactory.text('subtitle', {x: 10, y: 160, text: "Decision"})).add()
+      canvas.display.text(@core.canvasShapeFactory.text('subtitle', {x: 10, y: 260, text: "Relation"})).add()
+      @core.toolbox.tools.operation = canvas.display.rectangle(@core.canvasShapeFactory.tool('operation', {x: 100, y: 115}))
+      @core.toolbox.tools.decision = canvas.display.polygon(@core.canvasShapeFactory.tool('decision', {x: 100, y: 215}))
+      @core.toolbox.tools.relation = canvas.display.line(@core.canvasShapeFactory.tool('relation', {start: {x: 180, y: 290}, end: {x: 20, y: 340}}))
       canvas.addChild(@core.toolbox.tools.operation)
       canvas.addChild(@core.toolbox.tools.decision)
       canvas.addChild(@core.toolbox.tools.relation)
