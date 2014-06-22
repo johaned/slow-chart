@@ -186,6 +186,7 @@ Created by johaned on 12/15/13.
       F:: = o
       new F()
 
+  # Module that support the slowchart scaffolding process
   builder = ->
     # Return an object when instantiated
 
@@ -321,17 +322,22 @@ Created by johaned on 12/15/13.
 
   slowchart.registerModule("builder", builder);
 
+  # module that support operations over dom hierarchy
   misc = ->
     # Return an object when instantiated
 
+    # Class common types
     class2type: {}
 
+    # Variation in String format of classType object
     toString: ->
       @class2type.toString
 
+    # Properties (types) of classType Object
     hasOwn: ->
       @class2type.hasOwnProperty
 
+    # Iterates on a specific array
     each: (obj, callback, args) ->
       i = undefined
       isArray = undefined
