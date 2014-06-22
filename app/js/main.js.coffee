@@ -87,8 +87,8 @@ Created by johaned on 12/15/13.
             width: 150
             height: 30
             fill: "#8cc"
-            stroke: "2px #079"
-            onHoverStroke: "2px #65E"
+            stroke: "4px #079"
+            onHoverStroke: "4px #FFDE00"
             join: "round"
             origin:
               x: "center"
@@ -98,14 +98,14 @@ Created by johaned on 12/15/13.
             radius: 30
             rotation: 0
             fill: "#eba"
-            stroke: "2px #e55"
-            onHoverStroke: "2px #65E"
+            stroke: "4px #e55"
+            onHoverStroke: "4px #FFDE00"
             origin:
               x: "center"
               y: "center"
           relation:
             stroke: "4px #bE5"
-            onHoverStroke: "2px #65E"
+            onHoverStroke: "4px #FFDE00"
             cap: "round"
 
       # Setup the main container node in DOM
@@ -244,9 +244,21 @@ Created by johaned on 12/15/13.
       canvas.addChild(@core.toolbox.tools.operation)
       canvas.addChild(@core.toolbox.tools.decision)
       canvas.addChild(@core.toolbox.tools.relation)
-      @core.toolbox.tools.decision.bind "mouseenter", ->
-        @fill = "hsl(" + Math.random() * 360 + ", 50%, 50%)"
-        @draw();
+
+      # Sets dinamically border color when onMouseEnter event occurs, when
+      # mouse leave out the original border color is reseted
+      tools = @core.toolbox.tools
+      @core.misc.each "operation decision relation".split(" "), (i, tool) ->
+        initalBorderColor = tools[tool].stroke
+        onHoverBorderColor = tools[tool].onHoverStroke
+        tools[tool].bind "mouseenter", ->
+          @stroke = onHoverBorderColor
+          @draw();
+          return
+        tools[tool].bind "mouseleave", ->
+          @stroke = initalBorderColor
+          @draw();
+          return
         return
 
   slowchart.registerModule("builder", builder);
