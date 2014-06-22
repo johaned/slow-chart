@@ -82,7 +82,7 @@ Created by johaned on 12/15/13.
             align: "left"
             font: "bold 15px helvetica"
             fill: "#eee"
-        elements:
+        tools:
           operation:
             width: 150
             height: 30
@@ -484,4 +484,13 @@ Created by johaned on 12/15/13.
       return
 
   slowchart.registerModule("misc", misc);
+
+  # Supports objects making process that will be used to build canvas elements
+  canvasShapeFactory = ->
+    text: (element, options)->
+      @core.misc.extend(@core.graphicalSettings.text[element], options)
+    tool: (element, options)->
+      @core.misc.extend(@core.graphicalSettings.tools[element], options)
+
+  slowchart.registerModule("canvasShapeFactory", canvasShapeFactory);
 ) window, document
