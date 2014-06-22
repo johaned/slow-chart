@@ -324,7 +324,64 @@ Created by johaned on 12/15/13.
       parent.innerHTML = element + parent.innerHTML
       return
 
-    
+    # Merge the contents of two or more objects together into the first object.
+    extend: ->
+      src = undefined
+      copyIsArray = undefined
+      copy = undefined
+      name = undefined
+      options = undefined
+      clone = undefined
+      target = arguments_[0] or {}
+      i = 1
+      length = arguments_.length
+      deep = false
+
+      # Handle a deep copy situation
+      if typeof target is "boolean"
+        deep = target
+
+        # skip the boolean and the target
+        target = arguments_[i] or {}
+        i++
+
+      # Handle case when target is a string or something (possible in deep copy)
+      target = {}  if typeof target isnt "object" and not jQuery.isFunction(target)
+
+      # extend jQuery itself if only one argument is passed
+      if i is length
+        target = this
+        i--
+      while i < length
+
+        # Only deal with non-null/undefined values
+        if (options = arguments_[i])?
+
+          # Extend the base object
+          for name of options
+            src = target[name]
+            copy = options[name]
+
+            # Prevent never-ending loop
+            continue  if target is copy
+
+            # Recurse if we're merging plain objects or arrays
+            if deep and copy and (jQuery.isPlainObject(copy) or (copyIsArray = jQuery.isArray(copy)))
+              if copyIsArray
+                copyIsArray = false
+                clone = (if src and jQuery.isArray(src) then src else [])
+              else
+                clone = (if src and jQuery.isPlainObject(src) then src else {})
+
+              # Never move original objects, clone them
+              target[name] = jQuery.extend(deep, clone, copy)
+
+              # Don't bring in undefined values
+            else target[name] = copy  if copy isnt `undefined`
+        i++
+
+      # Return the modified object
+      target
 
   slowchart.registerModule("misc", misc);
 ) window, document
