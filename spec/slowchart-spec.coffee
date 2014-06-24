@@ -103,6 +103,20 @@ describe "slowchart engine creation", ->
         expect(@flowchart.flowspace.oCanvasElement).not.toBe(null)
         expect(@flowchart.flowspace.oCanvasElement).toEqual(jasmine.any(Object))
 
+    describe "toolbox building process", ->
+      beforeEach ->
+        @flowchart = slowchart.create settings
+        @flowchart.initialize()
+      it "check if operation tool is built", ->
+        expect(@flowchart.toolbox.tools.operation).not.toBe(null)
+        expect(@flowchart.toolbox.tools.operation).toEqual(jasmine.any(Object))
+      it "check if relation tool is built", ->
+        expect(@flowchart.toolbox.tools.relation).not.toBe(null)
+        expect(@flowchart.toolbox.tools.relation).toEqual(jasmine.any(Object))
+      it "check if decision tool is built", ->
+        expect(@flowchart.toolbox.tools.decision).not.toBe(null)
+        expect(@flowchart.toolbox.tools.decision).toEqual(jasmine.any(Object))
+
 
 
 
